@@ -40,7 +40,7 @@
 
 using namespace std;
 
-int *apply_all(int *arr1, int size1, int *arr2, int size2)
+int *apply_all(const int *const arr1, size_t size1, const int *const arr2, size_t size2)
 {
   int *result_arr = new int[size1 * size2];
 
@@ -64,7 +64,7 @@ void print(int *arr, int size)
   {
     std::cout << ", " << arr[i];
   }
-  cout << " }"<< endl;
+  cout << " }" << endl;
 }
 
 int main()
