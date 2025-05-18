@@ -45,11 +45,11 @@ int *apply_all(int *arr1, int size1, int *arr2, int size2)
   int *result_arr = new int[size1 * size2];
 
   size_t position{0};
-  for (size_t i{0}; i < size1; i++)
+  for (size_t i{0}; i < size2; i++)
   {
-    for (size_t j{0}; j < size2; j++)
+    for (size_t j{0}; j < size1; j++)
     {
-      result_arr[position] = arr1[i] * arr2[j];
+      result_arr[position] = arr1[j] * arr2[i];
       position++;
     }
   }
