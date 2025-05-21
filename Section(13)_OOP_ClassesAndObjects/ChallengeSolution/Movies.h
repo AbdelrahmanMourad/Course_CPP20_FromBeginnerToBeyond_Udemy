@@ -20,7 +20,7 @@ public:
     Movies();             // Constructor
     ~Movies();          // Destructor
     /*************************************************************************
-    add_movie expects the name of the move, rating and watched count
+    add_movie expects the name of the movie, rating and watched count
     
     It will search the movies vector to see if a movie object already exists
     with the same name. 

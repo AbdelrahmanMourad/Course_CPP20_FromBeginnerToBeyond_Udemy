@@ -1,5 +1,5 @@
 /******************************************************************
- * Section 13 Challenge Solution
+ * Section 13 Challenge
  * Movies.h
  *
  * Models a collection of Movies as a std::vector
@@ -34,14 +34,8 @@ Movies::~Movies()
   *********************************************************************/
 bool Movies::add_movie(std::string name, std::string rating, int watched)
 {
-    for (const Movie &movie : movies)
-    {
-        if (movie.get_name() == name)
-            return false;
-    }
-    Movie temp{name, rating, watched};
-    movies.push_back(temp);
-    return true;
+    // you implement this method
+    return false;
 }
 
 /*************************************************************************
@@ -57,14 +51,7 @@ bool Movies::add_movie(std::string name, std::string rating, int watched)
    *********************************************************************/
 bool Movies::increment_watched(std::string name)
 {
-    for (Movie &movie : movies)
-    {
-        if (movie.get_name() == name)
-        {
-            movie.increment_watched();
-            return true;
-        }
-    }
+    // you implement this method
     return false;
 }
 
@@ -77,16 +64,5 @@ bool Movies::increment_watched(std::string name)
     *********************************************************************/
 void Movies::display() const
 {
-    if (movies.size() == 0)
-    {
-        std::cout << "Sorry, no movies to display\n"
-                  << std::endl;
-    }
-    else
-    {
-        std::cout << "\n===================================" << std::endl;
-        for (const auto &movie : movies)
-            movie.display();
-        std::cout << "\n===================================" << std::endl;
-    }
+    // You implement this method
 }
