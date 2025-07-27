@@ -63,7 +63,13 @@ int main()
     Examples_UniquePointer_RoboticsCorner::unique_ptr_main5_Creation_class_using_make_unique(); //// user defined classes.
 
     /*___________shared_ptr___________*/
-    
+    Examples_SharedPointer_DrMustafaSaad::shared_ptr_main00_Creation();
+    Examples_SharedPointer_DrMustafaSaad::shared_ptr_main01_Shared_Count();
+    Examples_SharedPointer_DrMustafaSaad::shared_ptr_main02_Shared_with_Vectors();
+    Examples_SharedPointer_DrMustafaSaad::shared_ptr_main03_DownCasting_Shared_vs_Unique(); // ___CASTING___
+    Examples_SharedPointer_DrMustafaSaad::shared_ptr_main04_Concurrency_ADVANCED();         // Search.
+    Examples_SharedPointer_DrMustafaSaad::shared_ptr_main05_Misc();                         // Search.
+    Examples_SharedPointer_DrMustafaSaad::shared_ptr_main06_GuessTheOutput();               // Try.
 
     Examples_SharedPointer_RoboticsCorner::shared_ptr_main1(); // init by new, reset(), use_count()
     Examples_SharedPointer_RoboticsCorner::shared_ptr_main2(); // init by std::make_shared<>(), init by copy constructor, init by assignment operator=

@@ -39,6 +39,7 @@ public:
 
 class Department
 {
+    // Logic: Department is the actual OWNER
 public:
     Emp_Vec_t Employees;
     ~Department() { std::cout << "Destructor Called: Department.\n"; }
