@@ -2,13 +2,12 @@
                                                 Included libraries
     =============================================================================================================   */
 /*Classes*/
-#include "class_smart_pointers_my_implementation.h
-#include "class_Account.h"
-#include "class_Player.h"
+#include "class_smart_pointers_my_implementation.h" // my_unique_ptr / my_shared_ptr / my_weak_ptr.
 /*Modules*/
-#include "module_unique_ptr_DrMustafaSaad.h"
-#include "module_unique_ptr_RoboticsCorner.h"
-#include "module_shared_ptr_RoboticsCorner.h"
+#include "module_unique_ptr_DrMustafaSaad.h"  // unique_ptr.
+#include "module_unique_ptr_RoboticsCorner.h" // unique_ptr.
+#include "module_shared_ptr_RoboticsCorner.h" // shared_ptr.
+#include "module_shared_ptr_DrMustafaSaad.h"  // shared_ptr.
 /*Libraries*/
 #include <iostream>   // IO Stream.
 #include <memory>     // Smart pointers.
@@ -20,17 +19,8 @@
     =============================================================================================================   */
 
 /*  =============================================================================================================
-                                            unique_ptr
+                                            unique_ptr shared_ptr weak_ptr
     =============================================================================================================   */
-
-/*  =============================================================================================================
-                                                shared_ptr
-    =============================================================================================================   */
-
-/*  =============================================================================================================
-                                                weak_ptr
-    =============================================================================================================   */
-
 void weak_ptr_main1()
 {
     //
@@ -73,6 +63,8 @@ int main()
     Examples_UniquePointer_RoboticsCorner::unique_ptr_main5_Creation_class_using_make_unique(); //// user defined classes.
 
     /*___________shared_ptr___________*/
+    
+
     Examples_SharedPointer_RoboticsCorner::shared_ptr_main1(); // init by new, reset(), use_count()
     Examples_SharedPointer_RoboticsCorner::shared_ptr_main2(); // init by std::make_shared<>(), init by copy constructor, init by assignment operator=
     Examples_SharedPointer_RoboticsCorner::shared_ptr_main3(); // vector if shared pointers.
