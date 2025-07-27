@@ -1,17 +1,24 @@
 /*  =============================================================================================================
+                                                Header Gaurd File - Start
+    =============================================================================================================   */
+#ifndef _MODULE_UNIQUE_POINTER_DR_MUSTAFA_SAAD_
+#define _MODULE_UNIQUE_POINTER_DR_MUSTAFA_SAAD_
+
+/*  =============================================================================================================
                                                 Included libraries
     =============================================================================================================   */
 #include "class_Account.h"
 #include "class_Player.h"
-#include <iostream>
-#include <memory>
-#include <vector>
-#include <functional>
+#include <iostream>   // IO Stream.
+#include <memory>     // Smart pointers.
+#include <vector>     // Vectors.
+#include <functional> // Lambdas.
+#include <cstring>    // for memset.
 
 /*  =============================================================================================================
                                                 Declarations
     =============================================================================================================   */
-namespace DrMustafaSaadExamples
+namespace Examples_UniquePointer_DrMustafaSaad
 {
     /*
     =============
@@ -22,19 +29,24 @@ namespace DrMustafaSaadExamples
         Pass by reference if you want to keep using the pointer.
         Pass by const reference if you only need to read, not modify or move.
     */
-    void unique_ptr_main0_Creation(void);
-    void unique_ptr_main1_CopyConstructor_vs_Moving(void);
-    void unique_ptr_main2_Addresses(void);
-    void unique_ptr_main3_PassToFunction(void);
-    void unique_ptr_main4_ReturnFromFunction(void);
-    void unique_ptr_main5_HelperFunction(void);
+    void unique_ptr_main00_Creation(void);
+    void unique_ptr_main01_CopyConstructor_vs_Moving(void);
+    void unique_ptr_main02_Addresses(void);
+    void unique_ptr_main03_PassToFunction(void);
+    void unique_ptr_main04_ReturnFromFunction(void);
+    void unique_ptr_main05_HelperFunction(void);
+    void unique_ptr_main06_PointerToArrayAndLeaks(void);
+    void unique_ptr_main07_PointerWithVectors(void);
+    void unique_ptr_main08_Release_Reset_MemoryLeaks(void);
+    void unique_ptr_main09_warning_MemoryLeaks(void);
+    void unique_ptr_main10_BehindTheSeen(void);
 };
 
 /*  =============================================================================================================
                                             unique_ptr
     =============================================================================================================   */
 
-void DrMustafaSaadExamples::unique_ptr_main0_Creation(void)
+void Examples_UniquePointer_DrMustafaSaad::unique_ptr_main00_Creation(void)
 {
     /*  ----------------------------------------
         Creation.
@@ -52,7 +64,7 @@ void DrMustafaSaadExamples::unique_ptr_main0_Creation(void)
     // p1 internals are destroyed.
 }
 
-void DrMustafaSaadExamples::unique_ptr_main1_CopyConstructor_vs_Moving(void)
+void Examples_UniquePointer_DrMustafaSaad::unique_ptr_main01_CopyConstructor_vs_Moving(void)
 {
     /*  ----------------------------------------
        Copy Constructor vs Moving.
@@ -74,7 +86,7 @@ void DrMustafaSaadExamples::unique_ptr_main1_CopyConstructor_vs_Moving(void)
     p3.reset();   // Also set to nullptr.
 }
 
-void DrMustafaSaadExamples::unique_ptr_main2_Addresses(void)
+void Examples_UniquePointer_DrMustafaSaad::unique_ptr_main02_Addresses(void)
 {
     /*  ----------------------------------------
         Addresses
@@ -100,7 +112,7 @@ void DrMustafaSaadExamples::unique_ptr_main2_Addresses(void)
     */
 }
 
-void DrMustafaSaadExamples::unique_ptr_main3_PassToFunction(void)
+void Examples_UniquePointer_DrMustafaSaad::unique_ptr_main03_PassToFunction(void)
 {
 
     /*  ----------------------------------------
@@ -166,7 +178,7 @@ void DrMustafaSaadExamples::unique_ptr_main3_PassToFunction(void)
     TEST_pass2func();
 }
 
-void DrMustafaSaadExamples::unique_ptr_main4_ReturnFromFunction(void)
+void Examples_UniquePointer_DrMustafaSaad::unique_ptr_main04_ReturnFromFunction(void)
 {
 
     /*  ----------------------------------------
@@ -187,7 +199,7 @@ void DrMustafaSaadExamples::unique_ptr_main4_ReturnFromFunction(void)
     TEST_returnFromFunc();
 }
 
-void DrMustafaSaadExamples::unique_ptr_main5_HelperFunction(void)
+void Examples_UniquePointer_DrMustafaSaad::unique_ptr_main05_HelperFunction(void)
 {
     /*  ----------------------------------------
            Make Unique helper function
@@ -215,3 +227,103 @@ void DrMustafaSaadExamples::unique_ptr_main5_HelperFunction(void)
     };
     TEST_UniqueHelperFunc();
 }
+
+void unique_ptr_main06_PointerToArrayAndLeaks(void)
+{
+    int n = 5;
+    std::unique_ptr<int[]> p1{new int[n]};                  // Pointer to array of n integers.
+    std::unique_ptr<int[]> p2{new int[n]()};                // Pointer to array of n integers.
+    std::unique_ptr<int[]> p3 = std::make_unique<int[]>(n); // Pointer to array of n integers.
+
+    /**** ALWAYS USE ""std::make_unique()"" ****/
+    /*  -------------
+        Are they same?  NO :)
+        -------------
+            -   p1 created memory and did not initialize (faster).
+            -   p2 and p3 initialized to 0 [safe / slower].
+    */
+    /*   In Practice:    STL => vector/array are enough typically.   */
+
+    for (int i; 0; i < 5; ++i)
+        p1[i] = 7; // initialize the p1 array.
+
+    /* Function Definition. */
+    std::function<void(void)> Ptr2Array_Leaks_FreeMemory = [](void) -> void
+    {
+        // BE CAREFUL: undefined behavior for freeing memory.
+        std::unique_ptr<int> p_NotSafe{new int[5]}; // WRONG: Undefined Behavior!
+        std::unique_ptr<int[]> p_Safe{new int[5]};  // CORRECT.
+        *p_NotSafe = 10;
+
+        /*  ---------------------------------------------------
+        The problem is here:
+            "std::unique_ptr<int> p_NotSafe{new int[5]};"
+        This is undefined behavior because:
+            "std::unique_ptr<int>" expects a pointer to a single int and will call "delete" on destruction.
+            But you allocated an array with "new int[5]", which must be deleted with "delete[]".
+            When "p_NotSafe" goes out of scope, it will call "delete p_NotSafe", not "delete[] p_NotSafe",
+                which is undefined behavior and can cause memory leaks or crashes.
+
+        How to Fix
+            Use the array specialization:
+                ""std::unique_ptr<int[]> p_Safe {new int[5]};"" // Correct: will call delete[] automatically
+            Or, even better, use "std::make_unique":
+                ""auto p = std::make_unique<int[]>(5);""
+        --------------------------------------------------- */
+    };
+    std::function<void(void)> fast_initialize = [](void) -> void
+    {
+        int n = 100000;
+        std::unique_ptr<int[]> p_2_arr{new int[n]};
+
+        // You can get pointer array to do fast initialization.
+        int *p2int = p_2_arr.get();
+
+        /********* In integers: use memset ONLY with 0 and 1  *********/
+        memset(p2int, -1, n * size_t(int)); // Now arr "p_2_arr": -1 -1 -1 -1 -1 ...etc
+
+        char str[] = "hello";
+        memset(str, 't', sizeof(str)); //  tttttt
+    };
+    /* Function Call. */
+    Ptr2Array_Leaks_FreeMemory();
+    fast_initialize();
+}
+
+void unique_ptr_main07_PointerWithVectors(void) {}
+
+void unique_ptr_main08_Release_Reset_MemoryLeaks(void) {}
+
+void unique_ptr_main09_warning_MemoryLeaks(void) {}
+
+void unique_ptr_main10_BehindTheSeen(void) {}
+
+/*  =============================================================================================================
+                                                Header Gaurd File - Start
+    =============================================================================================================   */
+#endif /*_MODULE_UNIQUE_POINTER_DR_MUSTAFA_SAAD_*/
+
+/*
+========================================================================================================
+C++ Smart Pointer (unique_ptr) - Key Concepts & Best Practices Summary
+========================================================================================================
+| - unique_ptr is a smart pointer for exclusive ownership of dynamically allocated memory.
+| - It cannot be copied, only moved (copy constructor is deleted).
+| - Use std::move to transfer ownership between unique_ptrs.
+| - Pass by reference (unique_ptr<T>&) to allow access without transferring ownership.
+| - Pass by value (unique_ptr<T>) to transfer ownership (requires std::move).
+| - Pass by const reference (const unique_ptr<T>&) to allow read-only access without transfer.
+| - Returning unique_ptr from functions is safe (move semantics).
+| - For arrays, use unique_ptr<T[]> to ensure correct deletion (delete[]).
+| - Always use std::make_unique<T>() for exception safety and clarity.
+| - Never use unique_ptr<T> for arrays allocated with new T[] (use unique_ptr<T[]> instead).
+| - Avoid using unique_ptr<T>& as a member variable; prefer unique_ptr<T> for ownership.
+| - After moving from a unique_ptr, the source becomes nullptr and should not be used.
+| - Use get() to access the raw pointer, but avoid manual deletion.
+| - Use reset() to delete the managed object and optionally take ownership of a new one.
+| - Use release() to release ownership and return the raw pointer (manual deletion required).
+| - For containers, prefer std::vector or std::array over raw arrays with unique_ptr.
+| - Always match the unique_ptr type to the allocation type (T for single object, T[] for arrays).
+| - Use unique_ptr for strict resource management and to prevent memory leaks.
+========================================================================================================
+*/
