@@ -244,8 +244,10 @@ void unique_ptr_main06_PointerToArrayAndLeaks(void)
     */
     /*   In Practice:    STL => vector/array are enough typically.   */
 
-    for (int i; 0; i < 5; ++i)
+    for (int i = 0; i <= 5; ++i)
+    {
         p1[i] = 7; // initialize the p1 array.
+    }
 
     /* Function Definition. */
     std::function<void(void)> Ptr2Array_Leaks_FreeMemory = [](void) -> void
@@ -280,7 +282,7 @@ void unique_ptr_main06_PointerToArrayAndLeaks(void)
         int *p2int = p_2_arr.get();
 
         /********* In integers: use memset ONLY with 0 and 1  *********/
-        memset(p2int, -1, n * size_t(int)); // Now arr "p_2_arr": -1 -1 -1 -1 -1 ...etc
+        memset(p2int, -1, n * sizeof(int)); // Now arr "p_2_arr": -1 -1 -1 -1 -1 ...etc
 
         char str[] = "hello";
         memset(str, 't', sizeof(str)); //  tttttt

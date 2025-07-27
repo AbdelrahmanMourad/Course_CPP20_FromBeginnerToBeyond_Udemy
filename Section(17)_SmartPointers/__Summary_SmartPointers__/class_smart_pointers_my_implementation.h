@@ -11,4 +11,4 @@ public:
         delete raw_pointr;    // deallocate data.
         raw_pointr = nullptr; // null the pointer
     }
-}
+};
