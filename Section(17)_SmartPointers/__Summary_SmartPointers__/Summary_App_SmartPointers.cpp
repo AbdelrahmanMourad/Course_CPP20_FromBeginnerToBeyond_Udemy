@@ -2,6 +2,7 @@
                                                 Included libraries
     =============================================================================================================   */
 /*Classes*/
+#include "class_smart_pointers_my_implementation.h
 #include "class_Account.h"
 #include "class_Player.h"
 /*Modules*/
