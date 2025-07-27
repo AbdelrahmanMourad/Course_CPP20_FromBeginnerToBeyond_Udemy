@@ -290,13 +290,80 @@ void unique_ptr_main06_PointerToArrayAndLeaks(void)
     fast_initialize();
 }
 
-void unique_ptr_main07_PointerWithVectors(void) {}
+void unique_ptr_main07_PointerWithVectors(void)
+{
+    std::vector<std::unique_ptr<int>> vec;    // Create vector of Unique_ptrs 2 int
+    vec.push_back(std::make_unique<int>(20)); // push_back()
 
-void unique_ptr_main08_Release_Reset_MemoryLeaks(void) {}
+    auto p1 = std::make_unique<int>(20); // Create unique_ptr 2 int.
+    // vec.push_back(p1);                // CE: Using deleted Copy Construcotor.
+    vec.push_back(std::move(p1)); // OK: p1 is now empty.
 
-void unique_ptr_main09_warning_MemoryLeaks(void) {}
+    auto p2 = std::make_unique<int>(20);
 
-void unique_ptr_main10_BehindTheSeen(void) {}
+    /********** ""emplace_back()"" constructs in-place even withoud ""std::move()"" **********/
+    vec.emplace_back(std::move(p2));
+    vec.emplace_back(std::make_unique<int>(7));
+
+    /*  ---------------------------------------------------------
+        Since C++17: You can use emplace_back with & return
+            "" auto &b = vec.emplace_back(std::make_unique<int>(7)); ""
+        ---------------------------------------------------------   */
+    for (auto &p : vec)
+    {
+        // you must use "&"
+    }
+}
+
+void unique_ptr_main08_Release_Reset_MemoryLeaks(void)
+{
+    std::unique_ptr<int> p1_unique = std::make_unique<int>(20);
+
+    // Return the pointer and set nullptr.
+    int *p2_int = p1_unique.release();
+
+    if (p1_unique == nullptr) // validate.
+        std::cout << "p1 is gone.\n";
+
+    // The ONLY case when you have to remove p2_int.
+    std::cout << *p2_int << std::endl;
+    delete p2_int;    // delete/ free the allocated memory.
+    p2_int = nullptr; // null the pointer itself.
+
+    /************* DON'T use ""relase()"" unless you have good reason. *************/
+
+    // - Use release() to release ownership and return the raw pointer (manual deletion required).
+    // - Use reset()   to delete the managed object and optionally take ownership of a new one.
+}
+
+void unique_ptr_main09_warning_DanglingPointer(void)
+{
+    int *p = new int{30};
+
+    // You can assign same pointer to more that unique_ptr :(
+    // Dangling pointer --> Double "delete"
+    std::unique_ptr<int> p1{p};
+    std::unique_ptr<int> p2{p};
+
+    // RTE: once we go out of the scope. => double delete
+    // Tip: Don't assign raw pointers this way.
+}
+
+void unique_ptr_main10_BehindTheSeen(void)
+{
+    /*  ------------------------------------------------------------------
+        ●   Smart Pointers are just classes:
+            ○   They wrap raw pointers. (raw pointer is private member)
+            ○   operator overloading:   {*} , {"->"}
+            ○   deleted copy constructor.
+            ○   deleted copy assignment=.
+            ○   Object goes out of scope: Destructor Called.
+                ■   Properly clean the raw data
+                ■   This technique is called Resource Acquisition Is Initialization (RAII).
+            ○   Feel free to try to implement this class with some basic functionality. --> See "class my_unique_ptr"
+        ------------------------------------------------------------------
+    */
+}
 
 /*  =============================================================================================================
                                                 Header Gaurd File - Start
